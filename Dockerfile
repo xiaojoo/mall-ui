@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 # ============================================================================
 # mall-web 前端 多阶段构建镜像
 #   stage 1: node:20-alpine  构建 dist（pnpm，由 corepack 启用）

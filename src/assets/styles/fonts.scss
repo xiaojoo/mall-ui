@@ -1,0 +1,55 @@
+/* ===== 自托管字体（替代 Google Fonts CDN） =====
+ * 原 index.html 直接引 fonts.googleapis.com 的 render-blocking 样式表，
+ * 国内网络访问该域名经常超时/被墙 → 首屏渲染被卡住（打开白屏/卡顿）。
+ * 现在字体打包进本地资源，删除外部依赖。
+ * 仅保留 latin 子集（站内为中文+拉丁字符，中文走系统字体回退）。
+ */
+
+/* Orbitron 为可变字体，一份文件覆盖 500/700/900 */
+@font-face {
+  font-family: 'Orbitron';
+  font-style: normal;
+  font-weight: 500 900;
+  font-display: swap;
+  src: url('../fonts/orbitron.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/rajdhani-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/rajdhani-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/rajdhani-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/rajdhani-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Share Tech Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/sharetechmono.woff2') format('woff2');
+}

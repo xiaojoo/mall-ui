@@ -1,0 +1,96 @@
+@use 'fonts';
+@use 'variable';
+@use 'reset';
+@use 'scroll';
+@use 'nebula';
+
+/* ===== 通用加载态（替代 element-plus v-loading） ===== */
+.app-loading {
+  position: relative;
+  min-height: 8rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: rgba(4, 7, 18, 0.6);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 11;
+    width: 2rem;
+    height: 2rem;
+    margin: -1rem 0 0 -1rem;
+    border: 3px solid var(--line);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: app-loading-spin 0.8s linear infinite;
+  }
+}
+
+@keyframes app-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== 全局提示消息（自研 toast，替代 ElMessage） ===== */
+.app-message-container {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.app-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: rgba(10, 16, 40, 0.95);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  font-size: var(--font-size-base);
+  color: var(--color-text-main);
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+
+  &.app-message--show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .app-message-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--msg-color);
+    color: #fff;
+    font-size: var(--font-size-base);
+    font-weight: 700;
+  }
+
+  .app-message-content {
+    line-height: 1.4;
+  }
+}

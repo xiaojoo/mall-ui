@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NEBULA MART · 星环商城 — 未来购物体验</title>
+    <!-- 字体已自托管（src/assets/styles/fonts.scss），不再依赖 Google Fonts（国内访问会阻塞首屏渲染） -->
+  </head>
+  <body>
+    <div id="app">
+      <!-- 首屏加载占位：等路由首次解析（页面 chunk 就绪）后由 Vue 挂载替换，避免白屏 -->
+      <div class="app-boot">
+        <div class="app-boot-logo">NEBULA MART</div>
+        <div class="app-boot-bar"><i></i></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+    <style>
+      .app-boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        background: #05070f;
+        color: #9fb0c9;
+        font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        letter-spacing: 4px;
+      }
+      .app-boot-logo {
+        font-size: 18px;
+        color: #00f0ff;
+        text-shadow: 0 0 18px rgba(0, 240, 255, 0.6);
+      }
+      .app-boot-bar {
+        width: 160px;
+        height: 2px;
+        background: rgba(0, 240, 255, 0.15);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .app-boot-bar i {
+        display: block;
+        width: 40%;
+        height: 100%;
+        background: #00f0ff;
+        animation: app-boot-slide 1s ease-in-out infinite;
+      }
+      @keyframes app-boot-slide {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(400%);
+        }
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+// ============================================================
+// 全局主题变量（NEBULA 星环商城 · 科幻视觉体系）
+// 主色调 / 字体 / 圆角 / 阴影 统一在这里定义，全站引用，改这里即可全局换肤
+// ============================================================
+:root {
+  /* ===== 主色调（深空背景 + 霓虹青紫） ===== */
+  --bg: #04060f; /* 页面主背景 */
+  --bg2: #070b1e; /* 背景渐变副色 */
+  --panel: rgba(14, 22, 54, 0.55); /* 全息玻璃卡片底 */
+  --line: rgba(0, 240, 255, 0.28); /* 霓虹描边 */
+  --cyan: #00f0ff; /* 主色 · 青色（品牌主调） */
+  --blue: #3d7bff; /* 辅色 · 蓝 */
+  --magenta: #ff2ec4; /* 辅色 · 品红（促销/高亮） */
+  --purple: #a855f7; /* 辅色 · 紫 */
+  --green: #39ff88; /* 成功/价格色 */
+  --amber: #ffc53d; /* 评分星色 */
+  --txt: #e8f1ff; /* 主文本 */
+  --dim: #8fa3c8; /* 次级文本 */
+
+  /* 主色别名（通用语义，随主题走） */
+  --color-primary: var(--cyan);
+  --color-primary-hover: #4df3ff;
+  --color-success: var(--green);
+  --color-warning: var(--amber);
+  --color-danger: var(--magenta);
+  --color-info: var(--dim);
+  --color-text-main: var(--txt);
+  --color-text-regular: var(--dim);
+  --color-border: var(--line);
+
+  /* ===== 字体（公共变量，统一改这里即可全局换字体） ===== */
+  --font-h: 'Orbitron', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei',
+    sans-serif; /* 标题/价格/按钮 */
+  --font-b: 'Rajdhani', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei',
+    sans-serif; /* 正文 */
+  --font-m: 'Share Tech Mono', 'Consolas', monospace; /* 等宽点缀 */
+
+  /* 字号（14px = 0.875rem 为基准） */
+  --font-size-2xs: 0.7rem; /* 11.2px */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.8125rem; /* 13px */
+  --font-size-base: 0.875rem; /* 14px */
+  --font-size-md: 0.9375rem; /* 15px */
+  --font-size-lg: 1rem; /* 16px */
+  --font-size-xl: 1.125rem; /* 18px */
+  --font-size-2xl: 1.25rem; /* 20px */
+  --font-size-3xl: 1.375rem; /* 22px */
+  --font-size-4xl: 1.5rem; /* 24px */
+  --font-size-5xl: 1.625rem; /* 26px */
+  --font-size-6xl: 1.75rem; /* 28px */
+
+  /* 圆角 */
+  --radius-sm: 0.625rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+
+  /* 阴影 */
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --glow-cyan: 0 0 18px rgba(0, 240, 255, 0.55);
+
+  /* 页面容器最大宽度 */
+  --container-max-width: 80rem;
+}

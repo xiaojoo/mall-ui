@@ -1,0 +1,16 @@
+# 构建上下文排除项（避免把依赖/中间产物/本地配置塞进镜像）
+node_modules
+dist
+coverage
+.git
+.gitignore
+.idea
+.vscode
+.husky
+backup-*
+*.log
+logs
+Dockerfile
+Jenkinsfile
+.dockerignore
+README.md

@@ -1,0 +1,24 @@
+# mall-web 前端 nginx 配置模板
+# ${API_PROXY_TARGET} 会在容器启动时由镜像的 envsubst 机制替换为网关反代目标
+# 其余 nginx 运行期变量（$uri/$host/...）不会被替换，保持原样。
+server {
+    listen       80;
+    server_name  _;
+
+    root   /usr/share/nginx/html;
+    index  index.html;
+
+    # 前端 SPA 路由回退
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # API 反向代理到网关（网关再经 Nacos 路由到各微服务）
+    location /api/ {
+        proxy_pass ${API_PROXY_TARGET};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

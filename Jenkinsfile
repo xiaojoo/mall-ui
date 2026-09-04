@@ -1,25 +1,24 @@
 /*
  * mall-web 前端 Jenkins 流水线（适配 mall 后端 Docker 环境）
  * ------------------------------------------------------------
- * 参考后端环境（见 mall 仓库 install-infra-basic.sh / install-nginx.sh / Jenkinsfile.docker）：
+ * 后端环境（见 mall 仓库 install-infra-basic.sh / install-nginx.sh / Jenkinsfile.docker）：
  *   - nginx 容器名：nginx，宿主端口 8088 -> 容器 80
  *   - 前端静态：宿主目录 /data/mall/web 绑定挂载到容器 /usr/share/nginx/html（只读 :ro）
  *   - nginx 已配置 /api/ 反向代理到网关 mall-gateway:88（网关再经 Nacos 路由到各服务）
- *   - 前端构建产物(dist)只要放到宿主 /data/mall/web，nginx 即可直接服务，无需改 nginx 配置。
+ *   - 前端构建产物(dist)只需放到宿主 /data/mall/web，nginx 即可直接服务，无需改/重载 nginx。
  *
- * 因此本流水线：
- *   - 构建阶段：node:20 容器内用 pnpm 打 dist（项目 preinstall 强制要求 pnpm）。
- *   - 部署阶段：把 dist 同步到【宿主】FRONTEND_ROOT（= /data/mall/web）。
- *       ⚠️ nginx 的 html 挂载是只读(:ro)，不能 docker cp 进容器，必须写宿主目录。
- *       需确保 Jenkins 代理能访问该宿主路径，二选一：
- *          a) 把 /data/mall/web 挂进 Jenkins 代理容器；或
- *          b) 用 rsync over ssh 到目标机（自行替换下方 rsync 目标）。
- *   - 备份：从容器读取当前静态目录（只读挂载不影响读取），留作回滚。
+ * 部署方式（满足「把 /data/mall/web 挂进 Jenkins 代理容器」）：
+ *   - 部署阶段运行在一个 Jenkins 的 Docker 代理容器里，并额外挂载宿主目录：
+ *       -v /data/mall/web:/data/mall/web
+ *   - 因此对 FRONTEND_ROOT(= /data/mall/web) 的写入，会直接落到宿主（nginx 的绑定挂载源）。
+ *   - nginx 的 html 挂载是只读(:ro)，所以不能 docker cp 进容器；本流水线改为纯文件操作
+ *     （备份 + 清空 + 拷贝），部署阶段无需 docker CLI / docker.sock。
+ *   - 前提：Jenkins 所用的 Docker 守护进程宿主上存在 /data/mall/web（后端 install 脚本已创建）。
  *
  * 用法：Jenkins 新建 Pipeline -> Pipeline script from SCM -> 本仓库 / Jenkinsfile
  */
 pipeline {
-  agent any // 默认节点：需要装有 docker CLI（用于备份/可选 reload），并需能访问宿主 FRONTEND_ROOT
+  agent any // 全局节点：仅用于调度；各阶段各用不同的 Docker 代理容器
 
   options {
     timestamps()
@@ -37,17 +36,7 @@ pipeline {
     string(
       name: 'FRONTEND_ROOT',
       defaultValue: '/data/mall/web',
-      description: '宿主前端静态根目录（nginx 绑定挂载来源，部署目标）'
-    )
-    string(
-      name: 'NGINX_CONTAINER',
-      defaultValue: 'nginx',
-      description: 'mall 的 nginx 容器名（用于读取备份/可选 reload）'
-    )
-    string(
-      name: 'NGINX_HTML_DIR',
-      defaultValue: '/usr/share/nginx/html',
-      description: 'nginx 容器内静态根目录（挂载点，用于读取备份）'
+      description: '宿主前端静态根目录（nginx 绑定挂载来源；已挂进部署代理容器，替换/reload nginx 后直接生效）'
     )
     string(
       name: 'PNPM_VERSION',
@@ -58,11 +47,6 @@ pipeline {
       name: 'DEPLOY',
       defaultValue: true,
       description: '是否执行部署（false 则只构建不部署，用于验证产物）'
-    )
-    booleanParam(
-      name: 'RELOAD_NGINX',
-      defaultValue: false,
-      description: '是否在部署后执行 nginx reload（静态文件不需要；仅当 nginx 配置变更时才需要）'
     )
     string(
       name: 'HEALTH_CHECK_URL',
@@ -101,36 +85,39 @@ pipeline {
     stage('Deploy to Nginx') {
       when { expression { params.DEPLOY } }
 
+      // 部署代理容器：挂载宿主 /data/mall/web，写入即落到 nginx 绑定挂载源
+      agent {
+        docker {
+          image 'alpine:latest'
+          args '-v /data/mall/web:/data/mall/web'
+        }
+      }
+
       steps {
         unstash 'dist'
 
-        // 1) 备份：从容器读取当前静态目录（只读挂载不影响读取）
-        sh "docker cp ${params.NGINX_CONTAINER}:${params.NGINX_HTML_DIR} ./backup-${env.BUILD_NUMBER} || true"
-
-        // 2) 部署到宿主前端根目录（nginx 通过 bind mount 对外服务，需写宿主路径）
         script {
           def root = params.FRONTEND_ROOT
           if (!root?.trim()) { error('FRONTEND_ROOT 不能为空') }
           sh """
             set -e
-            if command -v rsync >/dev/null 2>&1; then
-              echo '==> 使用 rsync 同步'
-              rsync -a --delete dist/ '${root.trim()}'/
-            else
-              echo '==> rsync 不可用，使用 find+cp'
-              mkdir -p '${root.trim()}'
-              find '${root.trim()}'/ -mindepth 1 -maxdepth 1 -exec rm -rf {} +
-              cp -a dist/. '${root.trim()}'/
-            fi
-            echo '[OK] 部署完成 -> '${root.trim()}
-          """
-        }
+            ROOT='${root.trim()}'
 
-        // 3) 可选 reload（静态文件由 nginx 直接读取，无需 reload；仅配置变更时才需要）
-        script {
-          if (params.RELOAD_NGINX) {
-            sh "docker exec ${params.NGINX_CONTAINER} nginx -t && docker exec ${params.NGINX_CONTAINER} nginx -s reload"
-          }
+            echo '==> 校验挂载点'
+            [ -d "\$ROOT" ] || mkdir -p "\$ROOT"
+            mountpoint -q "\$ROOT" 2>/dev/null && echo "  \$ROOT 为挂载点(写入将落到宿主)" || echo "  \$ROOT 目录可写"
+
+            echo '==> 备份当前静态文件'
+            TS=\$(date +%Y%m%d%H%M%S)
+            cp -a "\$ROOT" "./backup-\$TS" 2>/dev/null || true
+
+            echo '==> 清空旧的静态文件'
+            find "\$ROOT"/ -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+
+            echo '==> 拷贝新构建产物'
+            cp -a dist/. "\$ROOT"/
+            echo '[OK] 部署完成 -> '\$ROOT
+          """
         }
       }
     }

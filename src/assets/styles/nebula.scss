@@ -93,11 +93,7 @@ body {
   letter-spacing: 2px;
 }
 .utility .wrap {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   height: 34px;
-}
 .utility b {
   color: var(--cyan);
   font-weight: 600;
@@ -134,11 +130,9 @@ body {
   object-fit: cover;
   display: block;
 }
-.utility .ut-right {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
+  .utility .ut-right {
+    display: none;
+  }
 .utility span,
 .utility .ut-link {
   cursor: pointer;
@@ -153,9 +147,9 @@ body {
   color: var(--cyan);
   text-shadow: 0 0 8px var(--cyan);
 }
-.utility .ut-info {
-  cursor: default;
-}
+  .utility .ut-right {
+    display: none;
+  }
 .utility .ut-auth {
   color: var(--cyan);
   text-decoration: none;
@@ -1421,14 +1415,13 @@ a.cat {
 @media (max-width: 760px) {
   /* 窄屏顶端工具条：右侧功能链接不消失——缩间距、隐藏装饰文案、允许桶内横向滚动 */
   .utility .ut-right {
-    gap: 12px;
+    display: none;
   }
-  .utility .ut-info {
+  .utility .ut-right {
     display: none;
   }
   .utility .wrap {
     overflow-x: auto;
-  }
   .search {
     display: none;
   }

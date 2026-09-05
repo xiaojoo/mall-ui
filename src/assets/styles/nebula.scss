@@ -1419,6 +1419,16 @@ a.cat {
   }
 }
 @media (max-width: 760px) {
+  /* 窄屏顶端工具条：右侧功能链接不消失——缩间距、隐藏装饰文案、允许桶内横向滚动 */
+  .utility .ut-right {
+    gap: 12px;
+  }
+  .utility .ut-info {
+    display: none;
+  }
+  .utility .wrap {
+    overflow-x: auto;
+  }
   .search {
     display: none;
   }

@@ -383,7 +383,7 @@ function handleForgot() {
 
 // ===== 微博登录 =====
 const WEIBO_CLIENT_ID = '2717647368'
-const WEIBO_REDIRECT_URI = 'http://auth.mall.com/oauth2.0/weibo/success'
+const WEIBO_REDIRECT_URI = import.meta.env.VITE_WEIBO_REDIRECT_URI || 'http://auth.example.com/oauth2.0/weibo/success'
 const WEIBO_REDIRECT_KEY = 'weibo_redirect'
 function handleWeiboLogin() {
   const redirect = route.query.redirect as string

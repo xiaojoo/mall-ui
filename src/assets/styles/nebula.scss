@@ -1438,3 +1438,10 @@ a.cat {
     align-items: flex-start;
   }
 }
+/* 窄屏(<=650)主头部右侧：隐藏“账户、心愿单”（保留购物车） */
+@media (max-width: 650px) {
+  .header-row .h-actions .hbtn:nth-child(1),
+  .header-row .h-actions .hbtn:nth-child(2) {
+    display: none;
+  }
+}

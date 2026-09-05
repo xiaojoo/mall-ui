@@ -7,7 +7,6 @@
           <span class="ut-avatar">
             <img v-if="userStore.avatar && !avatarBroken" :src="userStore.avatar" alt="头像" @error="avatarBroken = true" />
             <img v-else src="/default-avatar.svg" alt="头像" class="ut-avatar-default" />
-            <template v-else>◬</template>
           </span>
           <router-link class="ut-link" to="/home">
             <b class="ut-user">{{ userStore.username || '星舰会员' }}</b>

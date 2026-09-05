@@ -6,6 +6,7 @@
         <template v-if="userStore.token">
           <span class="ut-avatar">
             <img v-if="userStore.avatar" :src="userStore.avatar" alt="头像" />
+            <b v-else-if="userStore.username" class="ut-avatar-fallback">{{ userStore.username.charAt(0).toUpperCase() }}</b>
             <template v-else>◬</template>
           </span>
           <router-link class="ut-link" to="/home">

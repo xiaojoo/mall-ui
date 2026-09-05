@@ -60,6 +60,9 @@ onMounted(() => {
     sessionStorage.removeItem(WEIBO_REDIRECT_KEY)
     if (redirect && redirect !== router.currentRoute.value.fullPath) {
       router.push(redirect)
+    } else {
+      // 未保存回跳地址（直接微博登录成功）→ 默认进入首页
+      router.push('/home')
     }
   }
 })

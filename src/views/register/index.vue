@@ -346,17 +346,8 @@ async function handleRegister() {
       captchaCode: form.captcha || undefined,
     })
     if (res.code === 200) {
-      message.success('✓ 注册成功，欢迎加入星环！')
-      // 注册成功自动登录
-      try {
-        await userStore.userLogin({
-          username: form.phone,
-          password: form.password,
-        })
-      } catch {
-        /* 自动登录失败则去登录页 */
-      }
-      router.push('/home')
+      message.success('✓ 注册成功，请登录')
+      router.push('/login')
     } else {
       message.error(res.message || '注册失败')
       loadCaptcha()

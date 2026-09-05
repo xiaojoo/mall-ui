@@ -5,7 +5,7 @@
       <div class="ut-left">
         <template v-if="userStore.token">
           <span class="ut-avatar">
-            <img v-if="userStore.avatar" :src="userStore.avatar" alt="头像" />
+            <img v-if="userStore.avatar && !avatarBroken" :src="userStore.avatar" alt="头像" @error="avatarBroken = true" />
             <b v-else-if="userStore.username" class="ut-avatar-fallback">{{ userStore.username.charAt(0).toUpperCase() }}</b>
             <template v-else>◬</template>
           </span>
@@ -122,6 +122,9 @@ const route = useRoute()
 const userStore = useUserStore()
 const cartStore = useCartStore()
 const favStore = useFavoritesStore()
+const avatarBroken = ref(false)
+// 头像地址变化(如重新登录/刷新资料)时重置错误状态
+watch(() => userStore.avatar, () => { avatarBroken.value = false })
 
 // 主头部只在 首页 / 商品列表 / 商品详情 显示（utility 工具条始终显示）
 const showMainHeader = computed(() => {

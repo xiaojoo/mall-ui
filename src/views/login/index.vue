@@ -288,9 +288,11 @@ function drawLocalCaptcha() {
   localCaptcha = code
 }
 
+// 显示后端验证码图 → 交给后端校验；仅本地兜底图(无后端图)时前端比对本地码
 const checkLocalCaptcha = () =>
-  !captchaImg.value ||
-  pwdForm.captcha.toUpperCase() === localCaptcha.toUpperCase()
+  captchaImg.value
+    ? true
+    : pwdForm.captcha.toUpperCase() === localCaptcha.toUpperCase()
 
 // ===== 登录 =====
 async function handleLogin() {
